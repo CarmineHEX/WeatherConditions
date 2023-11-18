@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using WeatherConditions.Models;
 
 namespace WeatherConditions.Controllers
@@ -9,14 +7,14 @@ namespace WeatherConditions.Controllers
     {
         private readonly WeatherContext _context;
 
-        public WeatherArchivesController(WeatherContext context) 
+        public WeatherArchivesController(WeatherContext context)
         {
-           _context = context;
+            _context = context;
         }
 
         public IActionResult ViewWeatherArchives(int? year, int? month, int page = 1)
         {
-            
+
             IQueryable<Weather> query = _context.Weathers;
 
             if (year.HasValue)
@@ -29,7 +27,7 @@ namespace WeatherConditions.Controllers
                 query = query.Where(w => w.Date.HasValue && w.Date.Value.Month == month.Value);
             }
 
-            var pageSize = 10; // Количество элементов на странице
+            var pageSize = 10;
             var totalCount = query.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 

@@ -1,7 +1,7 @@
 ﻿using NPOI.SS.UserModel;
 using System.Globalization;
 
-namespace WeatherConditions.Controllers
+namespace WeatherConditions.Models
 {
     public static class CellValue
     {
@@ -25,7 +25,7 @@ namespace WeatherConditions.Controllers
             }
 
             return cell.CellType == CellType.Numeric ?
-                (int)(cell.NumericCellValue) : null;
+                (int)cell.NumericCellValue : null;
         }
 
 
@@ -37,7 +37,7 @@ namespace WeatherConditions.Controllers
             }
 
             return cell.CellType == CellType.Numeric ?
-                (float)(cell.NumericCellValue) : null;
+                (float)cell.NumericCellValue : null;
         }
 
         public static string? ConvertStringValue(this ICell cell)

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WeatherConditions.Models;
-
+﻿
 namespace WeatherConditions.Models
 {
     public class WeatherArchivesViewModel
