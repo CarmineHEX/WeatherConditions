@@ -1,0 +1,68 @@
+﻿@model WeatherArchivesViewModel
+
+<h2>Архивы погоды</h2>
+
+<form method="get" action="@Url.Action("ViewWeatherArchives")">
+    <label for="year">Год:</label>
+    <input type="number" name="year" value="@Model.Year" />
+
+    <label for="month">Месяц:</label>
+    <input type="number" name="month" value="@Model.Month" />
+
+    <button type="submit">Фильтр</button>
+</form>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Температура</th>
+                <th>Влажность воздуха</th>
+                <th>Точка росы</th>
+                <th>Давление</th>
+                <th>Направление ветра</th>
+                <th>Скорость ветра</th>
+                <th>Облачность</th>
+                <th>Нижняя граница облачности</th>
+                <th>Горизонтальная видимость</th>
+                <th>Погодные явления</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Weather)
+            {
+                <tr>
+                    <td>@item.Date?.ToShortDateString()</td>
+                    <td>@item.Time</td>
+                    <td>@item.Temperature</td>
+                    <td>@item.AirHumidity</td>
+                    <td>@item.DewPoint</td>
+                    <td>@item.Pressure</td>
+                    <td>@item.WindDirection</td>
+                    <td>@item.SpeedWind</td>
+                    <td>@item.CloudCover</td>
+                    <td>@item.LowerCloudLimit</td>
+                    <td>@item.HorizontalVisibility</td>
+                    <td>@item.WeatherPhenomena</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    Страница @Model.PageNumber из @Model.TotalPages
+    @if (Model.PageNumber > 1)
+    {
+        <a asp-action="ViewWeatherArchives" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-page="1">Первая</a>
+        <a asp-action="ViewWeatherArchives" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-page="@(Model.PageNumber - 1)">Предыдущая</a>
+    }
+
+    @if (Model.PageNumber < Model.TotalPages)
+    {
+        <a asp-action="ViewWeatherArchives" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-page="@(Model.PageNumber + 1)">Следующая</a>
+        <a asp-action="ViewWeatherArchives" asp-route-year="@Model.Year" asp-route-month="@Model.Month" asp-route-page="@Model.TotalPages">Последняя</a>
+    }
+</div>

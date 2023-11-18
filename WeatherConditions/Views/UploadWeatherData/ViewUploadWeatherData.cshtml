@@ -1,0 +1,6 @@
+﻿@model IEnumerable<IFormFile>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="files" multiple />
+    <button type="submit">Загрузить</button>
+</form>
