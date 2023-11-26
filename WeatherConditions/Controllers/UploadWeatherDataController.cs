@@ -2,6 +2,7 @@
 using WeatherConditions.Models;
 using Microsoft.EntityFrameworkCore;
 using NPOI.XSSF.UserModel;
+using System.Linq;
 
 
 namespace WeatherConditions.Controllers
@@ -25,39 +26,39 @@ namespace WeatherConditions.Controllers
         {
             foreach (var file in files)
             {
-                try
-                {
-                    if (file.Length > 0)
-                    {
-                        using (var stream = new MemoryStream())
-                        {
-                            file.CopyTo(stream);
-                            stream.Position = 0;
-                            using (var package = new XSSFWorkbook(stream))
-                            {
-                                var sheet = package.GetSheetAt(0);
-                                Weather weather = new Weather();
 
-                                try
-                                {
-                                    await db.SaveWeatherDataInBD(weather.GetListWeather(sheet));
-                                }
-                                catch (DbUpdateException)
-                                {
-                                    ModelState.AddModelError(string.Empty, "Произошла ошибка при сохранении данных в бд.");
-                                }
-                            }
-                        }
-                    }
+                if (!(file.Length > 0) || !CheckValidFileExtension(file.FileName))
+                {
+                    ViewBag.ErrorMessage = $"Не удалось считать файл {file.FileName}. Проверьте содержит ли файл данные и соответствует ли его разрешение .xls или .xlsx";
+                    return View("Error");
                 }
 
-                catch (Exception ex)
+                using var stream = new MemoryStream();
+                file.CopyTo(stream);
+                stream.Position = 0;
+
+                using var package = new XSSFWorkbook(stream);
+                var sheet = package.GetSheetAt(0);
+                Weather weather = new();
+
+                try
                 {
-                    ViewBag.ErrorMessage = $"Не удалось считать файл {file.FileName}: {ex.Message}";
-                    return View("Error");
+                    await db.SaveWeatherDataInBD(weather.GetListWeather(sheet));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError(string.Empty, "Произошла ошибка при сохранении данных в бд.");
                 }
             }
             return new RedirectResult("http://localhost:5138/Home");
+        }
+
+        private bool CheckValidFileExtension(string fileName)
+        {
+            string[] allowedExtensions = new[] { ".xls", ".xlsx" };
+            string? fileExtension = Path.GetExtension(fileName).ToLower();
+
+            return allowedExtensions.Contains(fileExtension);
         }
     }
 }
